@@ -1,3 +1,5 @@
+
+require('dotenv').config()
 // Import express and ejs
 var express = require ('express')
 var ejs = require('ejs')
@@ -25,10 +27,9 @@ app.locals.shopData = {shopName: "Bertie's Books"}
 
 const db = mysql.createPool({
     host: 'localhost',
-    user: 'berties_books_app',
-    password: 'qwertyuiop',
-    database: 'berties_books',
-
+    user: process.env.BB_USER,
+    password: process.env.BB_PASSWORD,
+    database: process.env.BB_DATABASE
 });
 global.db = db;
 
@@ -52,3 +53,5 @@ app.use('/books', booksRoutes)
 
 // Start the web app listening
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
+require('dotenv').config()

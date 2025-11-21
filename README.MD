@@ -8,3 +8,6 @@ To install and run:
 
 npm install
 node index.js
+
+
+i created a .env file to store creds without exposing on git thanks.
