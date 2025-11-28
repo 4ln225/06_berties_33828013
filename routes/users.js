@@ -2,6 +2,9 @@
 const bcrypt = require('bcrypt');
 const express = require("express")
 const router = express.Router()
+const { check, validationResult } = require('express-validator');
+
+
 const redirectLogin = (req, res, next) => {
     if (!req.session.userId) { res.redirect('./login');
     } else {
@@ -14,7 +17,20 @@ router.get('/register', function (req, res, next) {
     res.render('register.ejs')
 })
 
-router.post('/registered', function (req, res, next) {
+router.post(
+    '/registered',
+    [
+        check('email').isEmail(),
+        check('username').isLength({ min: 5, max: 20 }),
+        check('password').isLength({ min: 8 })
+    ],
+    function (req, res, next) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.render('register.ejs');
+    }
+
 
     const saltRounds = 10;
     const plainPassword = req.body.password;
