@@ -2,6 +2,14 @@
 const express = require("express")
 const router = express.Router()
 
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId) {res.redirect('/users/login')
+    } else {
+        next()
+    }
+}
+
+
 router.get('/search',function(req, res, next){
     res.render("search.ejs")
 });
@@ -11,7 +19,8 @@ router.get('/search-result', function (req, res, next) {
     res.send("You searched for: " + req.query.keyword)
 });
 
-router.get('/list', function(req, res, next) {
+router.get('/list', redirectLogin, function(req, res, next) {
+
     let sqlquery = "SELECT * FROM books";
     
     db.query(sqlquery, (err, result) => {
@@ -20,11 +29,13 @@ router.get('/list', function(req, res, next) {
     });
 });
 
-router.get('/addbook', function(req, res) {
+router.get('/addbook', redirectLogin, function(req, res) {
+
     res.render('addbook.ejs');
   });
   
-router.post('/bookadded', function (req, res, next) {
+  router.post('/bookadded', redirectLogin, function (req, res, next) {
+
     let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)";
     let newrecord = [req.body.name, req.body.price];
 

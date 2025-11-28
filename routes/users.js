@@ -2,6 +2,13 @@
 const bcrypt = require('bcrypt');
 const express = require("express")
 const router = express.Router()
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId) { res.redirect('./login');
+    } else {
+        next();
+    }
+}
+
 
 router.get('/register', function (req, res, next) {
     res.render('register.ejs')
@@ -80,6 +87,8 @@ router.post('/loggedin', function(req, res, next) {
                 }
 
                 if (match) {
+                    req.session.userId = email;
+                    res.redirect('/users/list');
                     res.send('Login successful!');
                 } else {
                     res.send('Incorrect password');
