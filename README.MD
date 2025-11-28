@@ -9,5 +9,7 @@ To install and run:
 npm install
 node index.js
 
+run on vm browser e.g. https://doc.gold.ac.uk/usr/398/
+
 
 i created a .env file to store creds without exposing on git thanks.
