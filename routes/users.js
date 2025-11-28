@@ -13,7 +13,7 @@ const redirectLogin = (req, res, next) => {
 router.get('/register', function (req, res, next) {
     res.render('register.ejs')
 })
-n
+
 router.post('/registered', function (req, res, next) {
 
     const saltRounds = 10;
