@@ -13,7 +13,7 @@ const redirectLogin = (req, res, next) => {
 router.get('/register', function (req, res, next) {
     res.render('register.ejs')
 })
-
+n
 router.post('/registered', function (req, res, next) {
 
     const saltRounds = 10;
@@ -72,31 +72,27 @@ router.post('/loggedin', function(req, res, next) {
     const sql = 'SELECT * FROM users WHERE email = ?';
 
     req.db.query(sql, [email], function(err, result) {
-        if (err) {
-            return next(err);
-        }
+        if (err) return next(err);
 
         if (result.length === 0) {
-            res.send('User not found');
-        } else {
-            const hashedPassword = result[0].password;
-
-            bcrypt.compare(password, hashedPassword, function(err, match) {
-                if (err) {
-                    return next(err);
-                }
-
-                if (match) {
-                    req.session.userId = email;
-                    res.redirect('/users/list');
-                    res.send('Login successful!');
-                } else {
-                    res.send('Incorrect password');
-                }
-            });
+            return res.send('User not found');
         }
+
+        const hashedPassword = result[0].password;
+
+        bcrypt.compare(password, hashedPassword, function(err, match) {
+            if (err) return next(err);
+
+            if (match) {
+                req.session.userId = email;   // ✅ save session
+                return res.redirect('/users/list');  // ✅ single response
+            } else {
+                return res.send('Incorrect password');
+            }
+        });
     });
 });
+
 
 
 
