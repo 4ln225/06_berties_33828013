@@ -3,7 +3,7 @@
 USE berties_books;
 
 
-INSERT INTO books (name, price) VALUES ('Brighton Rock', 12.99);
+INSERT INTO books (name, price) VALUES ('48 laws of power', 14.99);
 
 
 INSERT INTO users (first, last, username, email, password)
