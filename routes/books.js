@@ -14,9 +14,12 @@ router.get('/search',function(req, res, next){
     res.render("search.ejs")
 });
 
-router.get('/search-result', function (req, res, next) {
-    //searching in the database
-    res.send("You searched for: " + req.query.keyword)
+router.get('/search_result', function (req, res, next) {
+    console.log('raw query:', req.query);
+    const keyword = req.sanitize(req.query.search_text);
+    console.log('sanitised keyword:', keyword);
+
+    res.send("You searched for: " + keyword);
 });
 
 router.get('/list', redirectLogin, function(req, res, next) {
@@ -36,6 +39,9 @@ router.get('/addbook', redirectLogin, function(req, res) {
   
   router.post('/bookadded', redirectLogin, function (req, res, next) {
 
+    req.body.name  = req.sanitize(req.body.name);
+    req.body.price = req.sanitize(req.body.price);
+
     let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)";
     let newrecord = [req.body.name, req.body.price];
 
@@ -51,7 +57,6 @@ router.get('/addbook', redirectLogin, function(req, res) {
 });
 
 
-// Export the router object so index.js can access it
 module.exports = router
 
 

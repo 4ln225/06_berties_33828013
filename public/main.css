@@ -41,3 +41,13 @@ a:link {
     text-decoration: none;
     padding:5px;
   }
+
+  .error-box {
+    background: #ffdddd;
+    border: 1px solid #ff5555;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    color: #a40000;
+  }
+  

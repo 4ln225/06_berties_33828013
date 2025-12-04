@@ -1,85 +1,107 @@
 // Create a new router
 const bcrypt = require('bcrypt');
-const express = require("express")
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
+
+
 const { check, validationResult } = require('express-validator');
 
 
 const redirectLogin = (req, res, next) => {
-    if (!req.session.userId) { res.redirect('./login');
+    if (!req.session.userId) {
+        res.redirect('./login');
     } else {
         next();
     }
-}
-
+};
 
 router.get('/register', function (req, res, next) {
-    res.render('register.ejs')
-})
+    res.render('register.ejs');
+});
+
+
 
 router.post(
     '/registered',
+
+
     [
         check('email').isEmail(),
         check('username').isLength({ min: 5, max: 20 }),
         check('password').isLength({ min: 8 })
     ],
+
     function (req, res, next) {
-    const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-        return res.render('register.ejs');
-    }
+        const errors = validationResult(req);
+        console.log(errors.array());
 
 
-    const saltRounds = 10;
-    const plainPassword = req.body.password;
-
-    bcrypt.hash(plainPassword, saltRounds, function(err, hashedPassword) {
-        if (err) {
-            return next(err);
+        if (!errors.isEmpty()) {
+            return res.render('register', { errors: errors.array() });
         }
+        req.body.first = req.sanitize(req.body.first);
+        req.body.last = req.sanitize(req.body.last);
+        req.body.username = req.sanitize(req.body.username);
+        req.body.email = req.sanitize(req.body.email);
 
-        const sql = `
-            INSERT INTO users (first, last, email, password)
-            VALUES (?, ?, ?, ?)
-        `;
+  
+        const saltRounds = 10;
+        const plainPassword = req.body.password;
 
-        const values = [
-            req.body.first,
-            req.body.last,
-            req.body.email,
-            hashedPassword,
-        ];
-
-        req.db.query(sql, values, function(err, result) {
+        bcrypt.hash(plainPassword, saltRounds, function(err, hashedPassword) {
             if (err) {
                 return next(err);
             }
 
-            res.send(
-                'Hello ' + req.body.first + ' ' + req.body.last +
-                ', you are now registered with a secure password!'
-            );
-        });
-    });
-});
+           
+            const sql = `
+                INSERT INTO users (first, last, username, email, password)
+                VALUES (?, ?, ?, ?, ?)
+            `;
 
+            const values = [
+                req.body.first,
+                req.body.last,
+                req.body.username,
+                req.body.email,
+                hashedPassword
+            ];
+
+            req.db.query(sql, values, function(err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+
+                
+                res.send(
+                    'Hello ' + req.body.first + ' ' + req.body.last +
+                    ', you are now registered with a secure password!'
+                );
+            });
+        });
+    }
+);
+
+
+// LIST USERS
 router.get('/list', function(req, res, next) {
     const sql = 'SELECT first, last, email FROM users';
 
     req.db.query(sql, function(err, result) {
-
-        if (err) {
-            return next(err);
-        }
-        res.render('listusers.ejs', {users: result});
+        if (err) return next(err);
+        res.render('listusers.ejs', { users: result });
     });
 });
+
+
 
 router.get('/login', function(req, res, next) {
     res.render('login.ejs');
 });
+
+
 
 router.post('/loggedin', function(req, res, next) {
     const email = req.body.email;
@@ -100,8 +122,8 @@ router.post('/loggedin', function(req, res, next) {
             if (err) return next(err);
 
             if (match) {
-                req.session.userId = email;   // ✅ save session
-                return res.redirect('/users/list');  // ✅ single response
+                req.session.userId = email;
+                return res.redirect('/users/list');
             } else {
                 return res.send('Incorrect password');
             }
@@ -111,7 +133,4 @@ router.post('/loggedin', function(req, res, next) {
 
 
 
-
-
-// Export the router object so index.js can access it
-module.exports = router
+module.exports = router;

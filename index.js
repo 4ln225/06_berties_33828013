@@ -6,6 +6,9 @@ var ejs = require('ejs')
 var mysql = require('mysql2');
 var session = require('express-session')
 
+console.log("🔥 Server starting...");
+
+const expressSanitizer = require('express-sanitizer');
 
 const path = require('path')
 
@@ -18,6 +21,7 @@ app.set('view engine', 'ejs')
 
 // Set up the body parser 
 app.use(express.urlencoded({ extended: true }))
+app.use(expressSanitizer());
 
 // Set up public folder (for css and static js)
 app.use(express.static(path.join(__dirname, 'public')))
@@ -63,6 +67,16 @@ app.use('/users', usersRoutes)
 // Load the route handlers for /books
 const booksRoutes = require('./routes/books')
 app.use('/books', booksRoutes)
+
+console.log("📌 BEFORE loading API router");
+const apiRouter = require('./routes/api');
+console.log("✅ API router IMPORTED");
+
+console.log("📌 BEFORE mounting /api");
+app.use('/api', apiRouter);
+console.log("✅ Mounted /api");
+
+
 
 // Start the web app listening
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
