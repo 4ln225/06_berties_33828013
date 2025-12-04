@@ -68,17 +68,16 @@ app.use('/users', usersRoutes)
 const booksRoutes = require('./routes/books')
 app.use('/books', booksRoutes)
 
-console.log("📌 BEFORE loading API router");
+
 const apiRouter = require('./routes/api');
-console.log("✅ API router IMPORTED");
 
-console.log("📌 BEFORE mounting /api");
+
 app.use('/api', apiRouter);
-console.log("✅ Mounted /api");
 
 
 
-// Start the web app listening
+
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 require('dotenv').config()
