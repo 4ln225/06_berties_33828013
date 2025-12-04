@@ -1,4 +1,4 @@
-// Create a new router
+
 const bcrypt = require('bcrypt');
 const express = require("express");
 const router = express.Router();
@@ -85,7 +85,7 @@ router.post(
 );
 
 
-// LIST USERS
+
 router.get('/list', function(req, res, next) {
     const sql = 'SELECT first, last, email FROM users';
 
